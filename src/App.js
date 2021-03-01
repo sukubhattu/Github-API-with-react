@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import "./App.css";
+import axios from "axios";
+
+// Import navbar
+import Navbar from "./components/layout/Navbar";
+
+// Import user
+import Users from "./components/users/Users";
+
+export class App extends Component {
+	state = {
+		users: [],
+		loading: false,
+	};
+	async componentDidMount() {
+		// Setting state of loading to true
+		this.setState({ loading: true });
+		const res = await axios.get(
+			`https://api.github.com/users?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRETS}`
+		);
+		this.setState({ users: res.data, loading: false });
+	}
+	render() {
+		const nameOfProject = "Github Users";
+		const icon = "fab fa-github";
+		// console.log(this.state);
+		return (
+			<div className="App">
+				<Navbar title={nameOfProject} icon={icon}></Navbar>
+				<div className="container">
+					<Users loading={this.state.loading} users={this.state.users} />
+				</div>
+			</div>
+		);
+	}
 }
 
 export default App;
